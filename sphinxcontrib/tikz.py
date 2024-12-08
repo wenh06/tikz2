@@ -141,6 +141,7 @@ DOC_HEAD = r'''
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath}
 \usepackage{pgfplots}
+%s
 \usetikzlibrary{%s}
 \pagestyle{empty}
 '''
@@ -181,7 +182,8 @@ class TikzDirective(Directive):
                    'align': directives.unchanged,
                    'stringsubst': directives.flag,
                    'xscale': directives.unchanged,
-                   'include': directives.unchanged}
+                   'include': directives.unchanged,
+                   'packages': directives.unchanged}
 
     def run(self):
         node = tikz()
@@ -209,6 +211,7 @@ class TikzDirective(Directive):
                 captionstr = '\n'.join(self.arguments)
 
         node['libs'] = self.options.get('libs', '')
+        node['packages'] = self.options.get('packages', '')
         node['alt'] = self.options.get('alt', 'Figure made with TikZ')
         node['align'] = self.options.get('align', 'center')
         node['xscale'] = self.options.get('xscale', '')
@@ -251,7 +254,7 @@ def cleanup_tikzcode(self, node):
     return tikz
 
 
-def render_tikz(self, node, libs='', stringsubst=False):
+def render_tikz(self, node, libs='', packages='', stringsubst=False):
     config = self.builder.config
     # must use unique filenames for all tmpfiles to support sphinx -j
     tikz = cleanup_tikzcode(self, node)
@@ -268,7 +271,22 @@ def render_tikz(self, node, libs='', stringsubst=False):
 
     ensuredir(os.path.dirname(outfn))
 
-    latex = DOC_HEAD % libs
+    # split the packages string into a list of packages
+    # e.g. of the form "[slantfont,boldfont]xeCJK, amsfonts"
+    # into "\usepackage[slantfont,boldfont]{xeCJK}\n\usepackage{amsfonts}"
+
+    package_pattern = "(?:\\[(?P<package_options>[a-zA-Z0-9,=\\s]+)\\])?(?P<package_name>[a-zA-Z0-9]+)"
+    packages_str = ''
+    for package in re.finditer(package_pattern, packages):
+        package_name = package.group('package_name')
+        package_options = package.group('package_options')
+        if package_options:
+            packages_str += r'\usepackage[%s]{%s}' % (package_options, package_name)
+        else:
+            packages_str += r'\usepackage{%s}' % package_name
+
+    latex = DOC_HEAD % (packages_str, libs)
+    # latex = DOC_HEAD % libs
     latex += self.builder._tikz_preamble
     if config.tikz_latex_preamble:
         latex += config.tikz_latex_preamble
@@ -335,8 +353,10 @@ def render_tikz(self, node, libs='', stringsubst=False):
 def html_visit_tikzinline(self, node):
     libs = self.builder.config.tikz_tikzlibraries
     libs = libs.replace(' ', '').replace('\t', '').strip(', ')
+    packages = self.builder.config.tikz_extra_packages
+    packages = packages.replace(' ', '').replace('\t', '').strip(', ')
     try:
-        fname = render_tikz(self, node, libs)
+        fname = render_tikz(self, node, libs, packages)
     except TikzExtError as exc:
         self.document.reporter.error(str(exc))
     else:
@@ -347,8 +367,10 @@ def html_visit_tikzinline(self, node):
 def html_visit_tikz(self, node):
     libs = self.builder.config.tikz_tikzlibraries + ',' + node['libs']
     libs = libs.replace(' ', '').replace('\t', '').strip(', ')
+    packages = self.builder.config.tikz_extra_packages + ',' + node['packages']
+    packages = packages.replace(' ', '').replace('\t', '').strip(', ')
     try:
-        fname = render_tikz(self, node, libs, node['stringsubst'])
+        fname = render_tikz(self, node, libs, packages, node['stringsubst'])
     except TikzExtError as exc:
         self.document.reporter.error(str(exc))
     else:
@@ -521,6 +543,7 @@ def setup(app):
     app.add_config_value('tikz_tikzlibraries', '', 'env')
     app.add_config_value('tikz_transparent', True, 'html')
     app.add_config_value('tikz_includegraphics_path', '', 'env')
+    app.add_config_value('tikz_extra_packages', '', 'env')
 
     # fallback to another value depending what is on the system
     suite = 'pdf2svg'
