@@ -254,6 +254,30 @@ def cleanup_tikzcode(self, node):
     return tikz
 
 
+def parse_packages(packages, return_str=True):
+    # split the packages string into a list of packages
+    # e.g. of the form "[slantfont,boldfont]xeCJK, amsfonts"
+    # into "\usepackage[slantfont,boldfont]{xeCJK}\n\usepackage{amsfonts}"
+    package_pattern = "(?:\\[(?P<package_options>[a-zA-Z0-9,=\\s]+)\\])?(?P<package_name>[a-zA-Z0-9]+)"
+    if return_str:
+        packages_str = ""
+        for package in re.finditer(package_pattern, packages):
+            package_name = package.group("package_name")
+            package_options = package.group("package_options")
+            if package_options:
+                packages_str += r"\usepackage[%s]{%s}" % (package_options, package_name)
+            else:
+                packages_str += r"\usepackage{%s}" % package_name
+        return packages_str
+    else:
+        packages_list = []
+        for package in re.finditer(package_pattern, packages):
+            package_name = package.group("package_name")
+            package_options = package.group("package_options")
+            packages_list.append((package_name, package_options))
+        return packages_list
+
+
 def render_tikz(self, node, libs="", packages="", stringsubst=False):
     config = self.builder.config
     # must use unique filenames for all tmpfiles to support sphinx -j
@@ -271,19 +295,7 @@ def render_tikz(self, node, libs="", packages="", stringsubst=False):
 
     ensuredir(os.path.dirname(outfn))
 
-    # split the packages string into a list of packages
-    # e.g. of the form "[slantfont,boldfont]xeCJK, amsfonts"
-    # into "\usepackage[slantfont,boldfont]{xeCJK}\n\usepackage{amsfonts}"
-
-    package_pattern = "(?:\\[(?P<package_options>[a-zA-Z0-9,=\\s]+)\\])?(?P<package_name>[a-zA-Z0-9]+)"
-    packages_str = ""
-    for package in re.finditer(package_pattern, packages):
-        package_name = package.group("package_name")
-        package_options = package.group("package_options")
-        if package_options:
-            packages_str += r"\usepackage[%s]{%s}" % (package_options, package_name)
-        else:
-            packages_str += r"\usepackage{%s}" % package_name
+    packages_str = parse_packages(packages, return_str=True)
 
     latex = DOC_HEAD % (packages_str, libs)
     # latex = DOC_HEAD % libs
@@ -473,13 +485,15 @@ def builder_inited(app):
             app.builder._tikz_preamble += '{"%s/%s"}' % (app.srcdir, s)
         app.builder._tikz_preamble += "}\n"
 
-    if app.builder.name == "latex":
+    if app.builder.name in ["latex", "latexpdf"]:
         sty_path = os.path.join(app.builder._tikz_tempdir, "sphinxcontribtikz.sty")
         with open(sty_path, mode="w") as sty:
             sty.write(r"\RequirePackage{tikz}" + "\n")
             sty.write(r"\RequirePackage{amsmath}" + "\n")
             sty.write(r"\RequirePackage{amsfonts}" + "\n")
             sty.write(r"\RequirePackage{pgfplots}" + "\n")
+            for p in parse_packages(config.tikz_extra_packages, return_str=False):
+                sty.write(r"\RequirePackage{%s}" % p[0] + "\n")
             tikzlibs = config.tikz_tikzlibraries
             tikzlibs = tikzlibs.replace(" ", "")
             tikzlibs = tikzlibs.replace("\t", "")
@@ -526,9 +540,18 @@ def which(program):
 
 def setup(app):
     app.add_enumerable_node(
-        tikz, "figure", html=(html_visit_tikz, html_depart_tikz), latex=(latex_visit_tikz, latex_depart_tikz)
+        tikz,
+        "figure",
+        html=(html_visit_tikz, html_depart_tikz),
+        latex=(latex_visit_tikz, latex_depart_tikz),
+        latexpdf=(latex_visit_tikz, latex_depart_tikz),
     )
-    app.add_node(tikzinline, html=(html_visit_tikzinline, depart_tikzinline), latex=(latex_visit_tikzinline, depart_tikzinline))
+    app.add_node(
+        tikzinline,
+        html=(html_visit_tikzinline, depart_tikzinline),
+        latex=(latex_visit_tikzinline, depart_tikzinline),
+        latexpdf=(latex_visit_tikzinline, depart_tikzinline),
+    )
     app.add_role("tikz", tikz_role)
     app.add_directive("tikz", TikzDirective)
     app.add_config_value("tikz_latex_preamble", "", "env")

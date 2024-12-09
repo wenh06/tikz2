@@ -17,20 +17,20 @@
    \node (norm) at (-3, -7) {$\text{强收敛（依范数收敛）}$};
    \node (weak) at (-3, -9) {$\text{弱收敛}$};
 
-   \draw[->, transform canvas={xshift=1em}] (uniform) -- (ae) node[midway, below] {$\checkmark$};
-   \draw[->, transform canvas={xshift=-1em}] (ae) -- (uniform) node[sloped, anchor=center, midway, above] {{\color{red}$\boldsymbol{\times}$}, ~~ {\color{cyan} Egorov ($m E < \infty$)}};
+   \draw[arrows={-{Stealth[length=3mm, width=2mm]}}, transform canvas={xshift=1em}] (uniform) -- (ae) node[midway, below] {$\checkmark$};
+   \draw[arrows={-{Stealth[length=3mm, width=2mm]}}, transform canvas={xshift=-1em}] (ae) -- (uniform) node[sloped, anchor=center, midway, above] {{\color{red}$\boldsymbol{\times}$}, ~~ {\color{cyan} Egorov ($m E < \infty$)}};
 
-   \draw[->, transform canvas={yshift=0.3em}] (ae) -- (measure) node[midway, above] {{\color{red}$\boldsymbol{\times}$}, ~~ $m E < \infty$};
-   \draw[->, transform canvas={yshift=-0.3em}] (measure) -- (ae) node[sloped, anchor=center, midway, below] {{\color{red}$\boldsymbol{\times}$}, ~~ {\color{magenta} Riesz ($m E < \infty$)}};
+   \draw[arrows={-{Stealth[length=3mm, width=2mm]}}, transform canvas={yshift=0.3em}] (ae) -- (measure) node[midway, above] {{\color{red}$\boldsymbol{\times}$}, ~~ $m E < \infty$};
+   \draw[arrows={-{Stealth[length=3mm, width=2mm]}}, transform canvas={yshift=-0.3em}] (measure) -- (ae) node[sloped, anchor=center, midway, below] {{\color{red}$\boldsymbol{\times}$}, ~~ {\color{magenta} Riesz ($m E < \infty$)}};
 
-   \draw[->, transform canvas={xshift=0.5em}] (norm) -- (ae) node[midway, above] {\color{red}$\boldsymbol{\times}$};
-   \draw[->, transform canvas={xshift=-0.5em}] (ae) -- (norm) node[sloped, anchor=center, midway, below] {{\color{red}$\boldsymbol{\times}$}, ~ $\lVert f_n \rVert_p \to \lVert f \rVert_p$};
+   \draw[arrows={-{Stealth[length=3mm, width=2mm]}}, transform canvas={xshift=0.5em}] (norm) -- (ae) node[midway, above] {\color{red}$\boldsymbol{\times}$};
+   \draw[arrows={-{Stealth[length=3mm, width=2mm]}}, transform canvas={xshift=-0.5em}] (ae) -- (norm) node[sloped, anchor=center, midway, below] {{\color{red}$\boldsymbol{\times}$}, ~ $\lVert f_n \rVert_p \to \lVert f \rVert_p$};
 
-   \draw[->, transform canvas={xshift=-0.9em}] (norm) -- (measure) node[midway, above] {$\checkmark$};
-   \draw[->, transform canvas={xshift=0.9em}] (measure) -- (norm) node[sloped, anchor=center, midway, below] {{\color{red}$\boldsymbol{\times}$}, ~~ $\text{等度绝对连续积分}$ ($m E < \infty$)};
+   \draw[arrows={-{Stealth[length=3mm, width=2mm]}}, transform canvas={xshift=-0.9em}] (norm) -- (measure) node[midway, above] {$\checkmark$};
+   \draw[arrows={-{Stealth[length=3mm, width=2mm]}}, transform canvas={xshift=0.9em}] (measure) -- (norm) node[sloped, anchor=center, midway, below] {{\color{red}$\boldsymbol{\times}$}, ~~ $\text{等度绝对连续积分}$ ($m E < \infty$)};
 
-   \draw[->, transform canvas={xshift=-0.3em}] (norm) -- (weak) node[midway, left] {$\checkmark$};
-   \draw[->, transform canvas={xshift=0.3em}] (weak) -- (norm) node[midway, right] {\color{red}$\boldsymbol{\times}$};
+   \draw[arrows={-{Stealth[length=3mm, width=2mm]}}, transform canvas={xshift=-0.3em}] (norm) -- (weak) node[midway, left] {$\checkmark$};
+   \draw[arrows={-{Stealth[length=3mm, width=2mm]}}, transform canvas={xshift=0.3em}] (weak) -- (norm) node[midway, right] {\color{red}$\boldsymbol{\times}$};
 
 上图中, :math:`A \xrightarrow{\color{red} \boldsymbol{\times}} B` 表示 :math:`A` 不蕴含 (不能推出) :math:`B`,
 如果 :math:`\color{red} \times` 之后有注释, 则表示在某些条件下成立, 相应的结论也可能会弱一些 (对应括号中同颜色的文字).

@@ -107,6 +107,10 @@ mathjax_path = f"https://cdnjs.cloudflare.com/ajax/libs/mathjax/{_get_mathjax_la
 numfig = False
 
 
+tikz_extra_packages = "[slantfont,boldfont]xeCJK, amsfonts, pifont"
+tikz_tikzlibraries = "calc,cd,positioning,shapes,arrows.meta"
+
+
 # -------------------------------------------------
 # Code from https://github.com/SuperKogito/sphinxcontrib-pdfembed/blob/master/sphinxcontrib/pdfembed.py
 # -------------------------------------------------
