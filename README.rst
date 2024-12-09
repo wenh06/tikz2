@@ -2,6 +2,8 @@
 Description of the Ti\ *k*\ Z Sphinx Extension
 ==============================================
 
+**This is a fork of the original** `sphinxcontrib-tikz <https://github.com/sphinx-contrib/tikz.git>`__ **package.**
+
 This extension to `Sphinx <http://www.sphinx-doc.org>`__ enables the use of the
 PGF/Ti\ *k*\ Z LaTeX package to draw nice pictures.  (See `CTAN
 <http://www.ctan.org/tex-archive/graphics/pgf/>`__ or `sourceforge
