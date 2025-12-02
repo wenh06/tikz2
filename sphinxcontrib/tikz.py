@@ -28,14 +28,14 @@
 # policies, either expressed or implied, of Christoph Reller.
 
 """
-    sphinxcontrib.tikz
-    ~~~~~~~~~~~~~~~~~~
+sphinxcontrib.tikz
+~~~~~~~~~~~~~~~~~~
 
-    Draw pictures with the TikZ/PGF LaTeX package.
+Draw pictures with the TikZ/PGF LaTeX package.
 
-    See README.rst file for details
+See README.rst file for details
 
-    Author: Christoph Reller <christoph.reller@gmail.com>
+Author: Christoph Reller <christoph.reller@gmail.com>
 """
 
 __version__ = "0.4.20"
